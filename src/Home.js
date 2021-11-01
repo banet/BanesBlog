@@ -5,11 +5,7 @@ import BlogList from './BlogList'
 
 const Home = () => {
 
-   const [blogs, setBlogs] = useState([
-       {title: 'My new website', body: 'lorem ipsum..', author: 'bane', id:1},
-       {title: 'Washing the car', body: 'lorem ipsum..', author: 'luka', id:2},
-       {title: 'Explore React library', body: 'lorem ipsum..', author: 'bane', id:3}
-   ])
+   const [blogs, setBlogs] = useState(null)
 
    const [name, setName] =useState('mario')
    // We can delete item with  setBlog() using id 
@@ -17,18 +13,27 @@ const Home = () => {
        const newBlog = blogs.filter(item => item.id !== id)
        setBlogs(newBlog)
 }
-    const handleClick = (e) => {
-        console.log('hello Bane', blogs)
-        
-    }
+
 
 useEffect( () => {
-    console.log('use effect')
+    // Fetch data from JSON server using endpoints url"http://localhost:8000/blogs"
+    fetch('http://localhost:8000/blogs')
+    // Waiting for promise "data"
+        .then(res => {
+            return res.json()
+        })
+        // ..then  we fired function when over promise is complete! 
+        .then( data => {
+            console.log(data)
+            // Update data with useState function setName
+            setBlogs(data)
+        })
 },[])
+
     return (  
         <div className="home">
-           <BlogList blogs={blogs} title='All blogs' handleDelete={handleDelete}/>
-           <BlogList blogs = {blogs.filter( (item) => item.author === 'luka')} title="One new Chapter" handleDelete={handleDelete}/>
+           {blogs && <BlogList blogs={blogs} title='All blogs' handleDelete={handleDelete}/>}
+           {blogs && <BlogList blogs = {blogs.filter( (item) => item.author === 'luka')} title="One new Chapter" />}
            <button onClick={() => setName('luigi')}>Change name</button>
            <p>{name}</p>
         </div>
